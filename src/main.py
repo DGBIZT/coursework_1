@@ -1,6 +1,8 @@
 import datetime
 import os
 import pandas as pd
+import json
+
 
 
 def hello_client():
@@ -18,7 +20,7 @@ def hello_client():
     elif 18 < hour <= 24:
         return "Добрый вечер"
 
-print(hello_client())
+# print(hello_client())
 
 def read_transactions_excel_and_output(file_path: str) -> list[dict[str, str]]:
     """Функция для считывания финансовых операций из Excel"""
@@ -31,13 +33,13 @@ def read_transactions_excel_and_output(file_path: str) -> list[dict[str, str]]:
     excel_data = excel_data.fillna(value='')
     list_of_dicts = excel_data.to_dict('records')
 
-    return list_of_dicts[0:10]
+    return list_of_dicts
 
 list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
 # print(list_dicts)
 
 
-def start_date(list_with_dictionary: list[dict[str, str]]) -> str:
+def date(list_with_dictionary: list[dict[str, str]]) -> str:
     pass
 
 
@@ -50,22 +52,30 @@ def cards(list_dict: list[dict[str, str]]) -> list:
             card_numer = operation.get("Номер карты")
             number_of_cards.add(card_numer[1:])
     number = list(number_of_cards)
-    return number
-
-numer = cards(list_dicts)
-
-
-def last_digits(card_list: list) -> list[dict[str, str]]:
+    # return number
     """Создаю словарь из списка в формате {'last_digits': '7197'} ПОСЛЕДНИИ 4 ЦИФРЫ КАРТЫ"""
     new = []
-    for i in numer:
+    for i in number:
         if i:  # пропускаем пустые строки
             new.append({"last_digits": i})
     return new
+print(cards(list_dicts ))
+# numer = cards(list_dicts)
 
-four_digits = last_digits(numer)
+
+# def last_digits(card_list: list) -> list[dict[str, str]]:
+#     """Создаю словарь из списка в формате {'last_digits': '7197'} ПОСЛЕДНИИ 4 ЦИФРЫ КАРТЫ"""
+#     new = []
+#     for i in numer:
+#         if i:  # пропускаем пустые строки
+#             new.append({"last_digits": i})
+#     return new
+
+# four_digits = last_digits(numer)
+# print(four_digits)
 
 def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
+    """Функция рассчитывает общую сумму расходов"""
     list_top = []
     for operator in list_dicts:
 
@@ -74,7 +84,8 @@ def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
             if num in operator.get("Номер карты"):
                 sum_total = float(operator.get("Сумма платежа"))
                 positive_number = abs(sum_total)
-                list_top.append({num: positive_number})
+                pos_number_round = round(positive_number, 2)
+                list_top.append({num: pos_number_round})
 
     result_dict = {}
     for item in list_top:
@@ -92,7 +103,7 @@ def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
 
 
 total_spent =total_spent(list_dicts)
-# print(total_spent)
+# print(f"\n Сумма, {total_spent} \n")
 
 def cashback(list_dict: list[dict[str,float]]) -> list[dict[str,float]]:
     """Возвращает кешбэк 1 рубль на каждые 100 рублей"""
@@ -102,5 +113,40 @@ def cashback(list_dict: list[dict[str,float]]) -> list[dict[str,float]]:
             result.append({"cashback": round(score / 100, 2)})
     return result
 
-print(cashback(total_spent))
+# print(cashback(total_spent))
+
+def page_main():
+    """Функция главной страницы возвращает основную информацию"""
+    # period_date = get_period_date(date)
+    # struct_file_json = read_transactions_excel_and_output(period_date) #read_finance_exel_operastion
+    json_response = {
+        "greeting": hello_client(),
+        "cards": last_digits(numer), #main_cards(struct_file_json)
+        # "top_transactions": top_transactions(struct_file_json)
+        # "currency_rates": curency_raters(),
+        # "stock_prices": user_stocks(),
+    }
+    return json_response
+print(page_main())
+# def start_date():
+#     new_dict = {}
+#     salute = hello_client()
+#     new_dict["greeting"] = str(salute)
+#     json_data = json.dumps(new_dict, ensure_ascii=False)
+#
+#     return json_data
+# print(start_date())
+
+# СЕРВИСЫ
+# def main() -> None:
+#     """запрос дат и вывод информации за указанный период"""
+#     list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
+#     to_date = input("Введите дату")
+#     from_date = datetime.datetime.strptime(to_date, "%d.%m.%Y")
+#     date_replace = from_date.replace(day=1)
+#     list_dicts["Дата операции"] = pd.to_datetime(list_dicts["Дата операции"], format="%d.%m.%Y %H:%M:%S")
+#     df_for_date = list_dicts[(list_dicts["Дата операции"] <= to_date) & (list_dicts["Дата операции"]>= from_date)]
+#     print(df_for_date)
+#
+# main()
 
