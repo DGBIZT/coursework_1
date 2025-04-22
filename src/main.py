@@ -2,12 +2,6 @@ import datetime
 import os
 import pandas as pd
 
-# a = "hello world"
-# date_obj = datetime.datetime.now()
-# print(a, date_obj.strftime("%H:%M.%S"))
-#
-# time_only = date_obj.time().replace(microsecond=0)
-# print(time_only)
 
 def hello_client():
     """ Приветствие клиента с добрым утром и т.д. В зависимости от времени дня """
@@ -26,8 +20,6 @@ def hello_client():
 
 print(hello_client())
 
-
-
 def read_transactions_excel_and_output(file_path: str) -> list[dict[str, str]]:
     """Функция для считывания финансовых операций из Excel"""
 
@@ -35,20 +27,40 @@ def read_transactions_excel_and_output(file_path: str) -> list[dict[str, str]]:
     full_path = os.path.join(bas_dir, file_path)
 
     excel_data = pd.read_excel(full_path)
+    # Заменяем NaN на пустые строки
+    excel_data = excel_data.fillna(value='')
     list_of_dicts = excel_data.to_dict('records')
-    # Переделываем <null> в None
-    for item in list_of_dicts:
-        if pd.isna(item.get('Кэшбэк')):
-            item['Кэшбэк'] = None
-        if pd.isna(item.get("Номер карты")):
-            item["Номер карты"] = None
-        if pd.isna(item.get("МСС")):
-            item["MCC"] = None
 
-    return list_of_dicts[0:7]
+    return list_of_dicts
 
 list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
-print(list_dicts)
+# print(list_dicts)
+
 
 def start_date(list_with_dictionary: list[dict[str, str]]) -> str:
     pass
+
+
+
+def cards(list_dict: list[dict[str, str]]) -> list:
+    """Создаю список с уникальными значениями"""
+    number_of_cards = set()
+    for operation in list_dicts:
+        if operation.get("Номер карты") not in number_of_cards:
+            card_numer = operation.get("Номер карты")
+            number_of_cards.add(card_numer[1:])
+    num = list(number_of_cards)
+    return num
+
+numer = cards(list_dicts)
+
+
+def last_digits(card_list: list) -> list[dict[str, str]]:
+    """Создаю словарь из списка в формате {'last_digits': '7197'} ПОСЛЕДНИИ 4 ЦИФРЫ КАРТЫ"""
+    new = []
+    for i in numer:
+        if i:  # пропускаем пустые строки
+            new.append({"last_digits": i})
+    return new
+
+print(last_digits(numer))
