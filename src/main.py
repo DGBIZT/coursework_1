@@ -43,14 +43,14 @@ def start_date(list_with_dictionary: list[dict[str, str]]) -> str:
 
 
 def cards(list_dict: list[dict[str, str]]) -> list:
-    """Создаю список с уникальными значениями"""
+    """Создаю список с уникальными значениями карт"""
     number_of_cards = set()
     for operation in list_dicts:
         if operation.get("Номер карты") not in number_of_cards:
             card_numer = operation.get("Номер карты")
             number_of_cards.add(card_numer[1:])
-    num = list(number_of_cards)
-    return num
+    number = list(number_of_cards)
+    return number
 
 numer = cards(list_dicts)
 
@@ -63,4 +63,36 @@ def last_digits(card_list: list) -> list[dict[str, str]]:
             new.append({"last_digits": i})
     return new
 
-print(last_digits(numer))
+four_digits = last_digits(numer)
+
+def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
+    list_top = []
+    for operator in list_dicts:
+
+        for num in numer:
+
+            if num in operator.get("Номер карты"):
+                sum_total = float(operator.get("Сумма платежа"))
+                positive_number = abs(sum_total)
+                list_top.append({num: positive_number})
+
+    result_dict = {}
+    for item in list_top:
+        for name, score in item.items():
+            if name in result_dict:
+                result_dict[name] += score
+            else:
+                result_dict[name] = score
+    # result = [{k: v} for k, v in result_dict.items()]
+    result = []
+    for k, v in result_dict.items():
+        if k:
+            result.append({k: v})
+    print(result)
+    pass
+
+
+
+# print(list_top)
+# print(operator.get("Сумма платежа"))
+
