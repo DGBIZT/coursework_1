@@ -31,7 +31,7 @@ def read_transactions_excel_and_output(file_path: str) -> list[dict[str, str]]:
     excel_data = excel_data.fillna(value='')
     list_of_dicts = excel_data.to_dict('records')
 
-    return list_of_dicts
+    return list_of_dicts[0:10]
 
 list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
 # print(list_dicts)
@@ -92,14 +92,15 @@ def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
 
 
 total_spent =total_spent(list_dicts)
+# print(total_spent)
 
 def cashback(list_dict: list[dict[str,float]]) -> list[dict[str,float]]:
-    new_cashback = {}
+    """Возвращает кешбэк 1 рубль на каждые 100 рублей"""
+    result = []
     for item in list_dict:
-        for name, score in item.items():
-            new_cashback[name] = score / 100
-
-    return new_cashback
-
+        for score in item.values():
+            result.append({"cashback": round(score / 100, 2)})
+    return result
 
 print(cashback(total_spent))
+
