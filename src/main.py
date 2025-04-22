@@ -88,11 +88,18 @@ def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
     for k, v in result_dict.items():
         if k:
             result.append({k: v})
-    print(result)
-    pass
+    return result
 
 
+total_spent =total_spent(list_dicts)
 
-# print(list_top)
-# print(operator.get("Сумма платежа"))
+def cashback(list_dict: list[dict[str,float]]) -> list[dict[str,float]]:
+    new_cashback = {}
+    for item in list_dict:
+        for name, score in item.items():
+            new_cashback[name] = score / 100
 
+    return new_cashback
+
+
+print(cashback(total_spent))
