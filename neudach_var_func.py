@@ -1,3 +1,68 @@
+#def cards(list_dict: list[dict[str, str]]) -> list:
+#     """Создаю список с уникальными значениями карт"""
+#     number_of_cards = set()
+#     for operation in list_dicts:
+#         if operation.get("Номер карты") not in number_of_cards:
+#             card_numer = operation.get("Номер карты")
+#             number_of_cards.add(card_numer[1:])
+#     number = list(number_of_cards)
+#     return number
+#
+# numer = cards(list_dicts)
+# # print(numer)
+#
+#
+# def last_digits(card_list: list) -> list[dict[str, str]]:
+#     """Создаю словарь из списка в формате {'last_digits': '7197'} ПОСЛЕДНИИ 4 ЦИФРЫ КАРТЫ"""
+#     new = []
+#     for i in numer:
+#         if i:  # пропускаем пустые строки
+#             new.append({"last_digits": i})
+#     return new
+#
+# four_digits = last_digits(numer)
+#
+# def total_spent(list_dict: list[dict[str, str]]) -> list[dict[str,float]]:
+#     list_top = []
+#     for operator in list_dicts:
+#
+#         for num in numer:
+#
+#             if num in operator.get("Номер карты"):
+#                 sum_total = float(operator.get("Сумма платежа"))
+#                 positive_number = abs(sum_total)
+#                 list_top.append({num: positive_number})
+#
+#     result_dict = {}
+#     for item in list_top:
+#         for name, score in item.items():
+#             if name in result_dict:
+#                 result_dict[name] += score
+#             else:
+#                 result_dict[name] = score
+#     # result = [{k: v} for k, v in result_dict.items()]
+#     result = []
+#     for k, v in result_dict.items():
+#         if k:
+#             result.append({k: v})
+#     return result
+#
+#
+# total_spent =total_spent(list_dicts)
+#
+# def cashback(list_dict: list[dict[str,float]]) -> list[dict[str,float]]:
+#     new_cashback = {}
+#     for item in list_dict:
+#         for name, score in item.items():
+#             new_cashback[name] = score / 100
+#
+#     return new_cashback
+
+
+# print(cashback(total_spent))
+
+
+#########################################
 # a = "hello world"
 # date_obj = datetime.datetime.now()
 # print(a, date_obj.strftime("%H:%M.%S"))
