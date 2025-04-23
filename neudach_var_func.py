@@ -92,3 +92,31 @@
 # list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
 # print(list_dicts)
 
+# def start_date():
+#     new_dict = {}
+#     salute = hello_client()
+#     new_dict["greeting"] = str(salute)
+#     json_data = json.dumps(new_dict, ensure_ascii=False)
+#
+#     return json_data
+# print(start_date())
+
+################## pandas ##################################
+# date_df = excel_data[excel_data['Дата операции'] == date]
+
+    # Преобразование таблицы в список словарей
+    # list_of_dicts = petr_df.to_dict('records')
+
+    # Уникальные значения
+    # unique_cards = excel_data["Номер карты"].unique()
+
+    # Сумма значений каждого столбика
+    # sum_cards = excel_data.apply(pd.Series.mean)
+
+    # Преобразование в словарь
+    # result_dict = date_df.set_index("Номер карты")["Сумма операции с округлением"].to_dict()
+
+    #
+    # result_dict = defaultdict(list)
+    # for key, value in zip(date_df["Номер карты"], date_df["Сумма операции с округлением"]):
+    #     result_dict[key].append(value)
