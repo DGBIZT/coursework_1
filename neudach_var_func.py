@@ -91,3 +91,4 @@
 #
 # list_dicts = read_transactions_excel_and_output("../data/operations.xlsx")
 # print(list_dicts)
+
