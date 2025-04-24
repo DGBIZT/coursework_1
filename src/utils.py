@@ -78,8 +78,8 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
 # print(top_transactions(list_dicts))
 
 
-def currency_rate(file_path: str) -> float:
-    """Функция принимает на вход транзакцию и возвращает сумму транзакции в рублях"""
+def currency_rate(file_path: str) -> list:
+    """Функция определяет курс в зависимости от валюты"""
 
     base_dir = os.path.dirname(__file__)
     full_path = os.path.join(base_dir, file_path)
@@ -121,8 +121,45 @@ def currency_rate(file_path: str) -> float:
     return results
 # print(currency_rate("../data/user_settings.json"))
 
+def user_stocks(file_path: str) -> list:
+    """Функция возвращает стоимость акций в формате списка словарей """
+    base_dir = os.path.dirname(__file__)
+    full_path = os.path.join(base_dir, file_path)
 
+    with open(full_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
+    if 'user_stocks' in data:
+        st_prices = data['user_stocks']
+
+    results = []
+    for st_pr in st_prices:
+        load_dotenv()
+        api_key = os.getenv("Alpha_Vantage_API") #YN0YFHQ94W7TF9N8
+
+        # Делаем запрос к API
+        url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={st_pr}&apikey={api_key}'
+        headers = {"apikey": api_key}
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            json_data = response.json()
+            # a = json_data["Global Quote"]["05. price"]
+            return json_data
+            # results.append({
+            #     "stock": st_pr,
+            #     "price": json_data["Global Quote"]["05. price"]
+            # })
+
+        except requests.exceptions.RequestException:
+            print(f"Ошибка при получении стоимости {st_pr}")
+            results.append({
+                "stock": st_pr,
+                "price": 0.0
+            })
+    return results
+print(user_stocks("../data/user_settings.json"))
 # def transaction_amount(transaction_dict: dict) -> float:
 #     """Функция принимает на вход транзакцию и возвращает сумму транзакции в рублях"""
 #
