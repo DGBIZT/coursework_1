@@ -87,7 +87,17 @@ def currency_rate(file_path: str) -> float:
 
     with open(full_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    return data
+
+    eur_rate = data['user_currencies'][1]
+    usd_rate = data['user_currencies'][0]
+    new_dict_rate = list()
+    for key, value in data.items():
+        if key == 'user_currencies':
+            for val in value:
+                new_dict_rate.append({"currency": val})
+
+    return new_dict_rate
+
 #     amount = 1
 #     # currency = # Доллар или евро
 #     # to_forex = "RUB"
