@@ -101,6 +101,11 @@
 #     return json_data
 # print(start_date())
 
+# new_dict_rate = list()
+    # for key, value in data.items():
+    #     if key == 'user_currencies':
+    #         for val in value:
+    #             new_dict_rate.append({"currency": val})
 ################## pandas ##################################
 # date_df = excel_data[excel_data['Дата операции'] == date]
 

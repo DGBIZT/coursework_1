@@ -81,26 +81,54 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
 def currency_rate(file_path: str) -> float:
     """Функция принимает на вход транзакцию и возвращает сумму транзакции в рублях"""
 
-
     base_dir = os.path.dirname(__file__)
     full_path = os.path.join(base_dir, file_path)
 
     with open(full_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    eur_rate = data['user_currencies'][1]
-    usd_rate = data['user_currencies'][0]
-    new_dict_rate = list()
-    for key, value in data.items():
-        if key == 'user_currencies':
-            for val in value:
-                new_dict_rate.append({"currency": val})
+    currencies = data['user_currencies']  # ['USD', 'EUR']
 
-    return new_dict_rate
+    amount = 1
+    to_forex = "RUB"
 
-#     amount = 1
-#     # currency = # Доллар или евро
-#     # to_forex = "RUB"
+    # Определяем курс в зависимости от валюты
+    results = []
+    for currency in currencies:
+        load_dotenv()
+        api_key = os.getenv("API_KEY")
+
+        # Делаем запрос к API
+        url = f"https://api.apilayer.com/exchangerates_data/convert?to={to_forex}&from={currency}&amount={amount}"
+        headers = {"apikey": api_key}  # API_KEY=NIhGoFiN8rFXWNgk9DnsJdN6GffOV2wq
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            json_data = response.json()
+            results.append({
+                'currency': currency,
+                "rate": round(json_data['result'], 2)
+            })
+
+        except requests.exceptions.RequestException:
+            print(f"Ошибка при получении курса для {currency}")
+            results.append({
+                'currency': currency,
+                "rate": 0.0
+            })
+
+    return results
+# print(currency_rate("../data/user_settings.json"))
+
+
+
+# def transaction_amount(transaction_dict: dict) -> float:
+#     """Функция принимает на вход транзакцию и возвращает сумму транзакции в рублях"""
+#
+#     amount = transaction_dict["operationAmount"]["amount"]
+#     currency = transaction_dict["operationAmount"]["currency"]["code"]
+#     to_forex = "RUB"
 #
 #     if currency == "RUB":
 #
@@ -124,9 +152,21 @@ def currency_rate(file_path: str) -> float:
 #             json_data = json.loads(result)
 #             return round(json_data["result"], 2)
 #             # return json_data
-#     return data
-print(currency_rate("../data/user_settings.json"))
-
+#
+#
+# print(
+#     transaction_amount(
+#         {
+#             "id": 41428829,
+#             "state": "EXECUTED",
+#             "date": "2019-07-03T18:35:29.512364",
+#             "operationAmount": {"amount": "8221.37", "currency": {"name": "USD", "code": "USD"}},
+#             "description": "Перевод организации",
+#             "from": "MasterCard 7158300734726758",
+#             "to": "Счет 35383033474447895560",
+#         }
+#     )
+# )
 # print(
 #     transaction_amount(
 #         {

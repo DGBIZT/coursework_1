@@ -7,12 +7,12 @@ from utils import read_transactions_excel_and_output
 import json
 
 
-json_data = "../data/user_settings.json"
-base_dir = os.path.dirname(__file__)
-full_path = os.path.join(base_dir, json_data)
-
-with open(full_path, 'r', encoding='utf-8') as f:
-    data = json.load(f)
+# json_data = "../data/user_settings.json"
+# base_dir = os.path.dirname(__file__)
+# full_path = os.path.join(base_dir, json_data)
+#
+# with open(full_path, 'r', encoding='utf-8') as f:
+#     data = json.load(f)
 
 # print(data)
 #
@@ -96,3 +96,12 @@ with open(full_path, 'r', encoding='utf-8') as f:
 #
 # print(result_dict)
 
+# a = [{'currency': 'USD'}, {'currency': 'EUR'}]
+#
+# for usd in a:
+#     if usd['currency'] == 'USD':
+#         b = usd['currency']
+#         print(b)
+#     elif usd['currency'] == 'EUR':
+#         c = usd['currency']
+#         print(c)

@@ -3,7 +3,7 @@
 # import pandas as pd
 # from collections import defaultdict
 # from datetime import datetime
-from utils import hello_client, cards, read_transactions_excel_and_output,top_transactions
+from utils import hello_client, cards, read_transactions_excel_and_output,top_transactions, currency_rate
 import json
 
 def page_main():
@@ -13,8 +13,8 @@ def page_main():
     json_response = {
         "greeting": hello_client(),
         "cards": cards(struct_file_json), #main_cards(struct_file_json)
-        "top_transactions": top_transactions(struct_file_json)
-        # "currency_rates": curency_raters(),
+        "top_transactions": top_transactions(struct_file_json),
+        "currency_rates": currency_rate("../data/user_settings.json"),
         # "stock_prices": user_stocks(),
     }
     json_data = json.dumps(json_response, indent=4, ensure_ascii=False)
