@@ -4,7 +4,17 @@ import pandas as pd
 from collections import defaultdict
 from datetime import datetime
 from utils import read_transactions_excel_and_output
+import json
 
+
+json_data = "../data/user_settings.json"
+base_dir = os.path.dirname(__file__)
+full_path = os.path.join(base_dir, json_data)
+
+with open(full_path, 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+# print(data)
 #
 # def hello_client():
 #     """ Приветствие клиента с добрым утром и т.д. В зависимости от времени дня """
@@ -25,40 +35,40 @@ from utils import read_transactions_excel_and_output
 #
 
 
-list_dicts = read_transactions_excel_and_output("../data/operations.xlsx", "31.12.2021 16:44:00")
-# print(list_dicts)
+# list_dicts = read_transactions_excel_and_output("../data/operations.xlsx", "31.12.2021 16:44:00")
+# # print(list_dicts)
+# #
+# def cards(last_dict: list[dict[str, str]]) -> dict:
+#     """Словарь, где ключ карта, а значение сумма транзакций по карте"""
+#     sum_dict = last_dict.groupby("Номер карты")["Сумма операции с округлением"].sum().to_dict()
+#     new_dict = {}
+#     for card, value in sum_dict.items():
+#         if card:
+#             new_dict[card[1:]] = value
 #
-def cards(last_dict: list[dict[str, str]]) -> dict:
-    """Словарь, где ключ карта, а значение сумма транзакций по карте"""
-    sum_dict = last_dict.groupby("Номер карты")["Сумма операции с округлением"].sum().to_dict()
-    new_dict = {}
-    for card, value in sum_dict.items():
-        if card:
-            new_dict[card[1:]] = value
-
-    new_list_dict = list()
-    for card, value in new_dict.items():
-        new_list_dict.append({"last_digits": card, "total_spent": value, "cashback": value / 100})
-
-    return sum_dict
-cards_list = cards(list_dicts)
-# print(cards_list)
-
-def top_transactions(last_dict: list[dict[str, str]]) -> list:
-    top_2 = last_dict.sort_values('Сумма операции с округлением', ascending=False).head(2)
-    result = {
-        "top_operation": top_2.rename(columns={
-            'Дата платежа': 'date',
-            'Сумма операции с округлением': 'amount',
-            'Категория': 'category',
-            'Описание': 'description'
-        })[['date', 'amount', 'category', 'description']].to_dict('records')
-    }
-    # result_dict = {"date": last_dict['Сумма операции с округлением'].max()['Дата платежа'].tolist(),}
-      # {'Петр': [25, 26, 27]}
-    return result
-
-print(top_transactions(list_dicts))
+#     new_list_dict = list()
+#     for card, value in new_dict.items():
+#         new_list_dict.append({"last_digits": card, "total_spent": value, "cashback": value / 100})
+#
+#     return sum_dict
+# cards_list = cards(list_dicts)
+# # print(cards_list)
+#
+# def top_transactions(last_dict: list[dict[str, str]]) -> list:
+#     top_2 = last_dict.sort_values('Сумма операции с округлением', ascending=False).head(2)
+#     result = {
+#         "top_operation": top_2.rename(columns={
+#             'Дата платежа': 'date',
+#             'Сумма операции с округлением': 'amount',
+#             'Категория': 'category',
+#             'Описание': 'description'
+#         })[['date', 'amount', 'category', 'description']].to_dict('records')
+#     }
+#     # result_dict = {"date": last_dict['Сумма операции с округлением'].max()['Дата платежа'].tolist(),}
+#       # {'Петр': [25, 26, 27]}
+#     return result
+#
+# print(top_transactions(list_dicts))
 
 # person = {'name': 'John', 'age': 25, 'gender': 'male'}
 # new_list = []

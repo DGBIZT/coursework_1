@@ -4,6 +4,8 @@ import pandas as pd
 from collections import defaultdict
 from datetime import datetime
 import json
+import requests
+from dotenv import load_dotenv
 
 def hello_client():
     """ Приветствие клиента с добрым утром и т.д. В зависимости от времени дня """
@@ -76,6 +78,58 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
 # print(top_transactions(list_dicts))
 
 
+def currency_rate(file_path: str) -> float:
+    """Функция принимает на вход транзакцию и возвращает сумму транзакции в рублях"""
+
+
+    base_dir = os.path.dirname(__file__)
+    full_path = os.path.join(base_dir, file_path)
+
+    with open(full_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return data
+#     amount = 1
+#     # currency = # Доллар или евро
+#     # to_forex = "RUB"
+#
+#     if currency == "RUB":
+#
+#         return round(float(amount), 2)
+#
+#     else:
+#         load_dotenv()
+#         api_key = os.getenv("API_KEY")
+#
+#         url = f"https://api.apilayer.com/exchangerates_data/convert?to={to_forex}&from={currency}&amount={amount}"
+#         payload = {}
+#         headers = {"apikey": api_key}
+#         try:
+#             response = requests.request("GET", url, headers=headers, data=payload)
+#
+#         except requests.exceptions.RequestException:
+#             print("ошибка http запроса")
+#             return 0
+#         else:
+#             result = response.text
+#             json_data = json.loads(result)
+#             return round(json_data["result"], 2)
+#             # return json_data
+#     return data
+print(currency_rate("../data/user_settings.json"))
+
+# print(
+#     transaction_amount(
+#         {
+#             "id": 41428829,
+#             "state": "EXECUTED",
+#             "date": "2019-07-03T18:35:29.512364",
+#             "operationAmount": {"amount": "8221.37", "currency": {"name": "USD", "code": "USD"}},
+#             "description": "Перевод организации",
+#             "from": "MasterCard 7158300734726758",
+#             "to": "Счет 35383033474447895560",
+#         }
+#     )
+# )
 
 # def cards(list_dict: list[dict[str, str]]) -> list:
 #     """Создаю список с уникальными значениями карт"""
