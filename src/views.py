@@ -1,9 +1,10 @@
-import datetime
-import os
-import pandas as pd
-from collections import defaultdict
-from datetime import datetime
+# import datetime
+# import os
+# import pandas as pd
+# from collections import defaultdict
+# from datetime import datetime
 from utils import hello_client, cards, read_transactions_excel_and_output,top_transactions
+import json
 
 def page_main():
     """Функция главной страницы возвращает основную информацию"""
@@ -16,7 +17,8 @@ def page_main():
         # "currency_rates": curency_raters(),
         # "stock_prices": user_stocks(),
     }
-    return json_response
+    json_data = json.dumps(json_response, indent=4, ensure_ascii=False)
+    return json_data
 print(page_main())
 
 

@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from collections import defaultdict
 from datetime import datetime
+import json
 
 def hello_client():
     """ Приветствие клиента с добрым утром и т.д. В зависимости от времени дня """
@@ -72,6 +73,7 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
 
     return result_top
 
+# print(top_transactions(list_dicts))
 
 
 
