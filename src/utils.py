@@ -7,7 +7,14 @@ from datetime import datetime
 import pandas as pd
 import requests
 from dotenv import load_dotenv
+import logging
 
+logger = logging.getLogger("utils")
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler("logs/utils.log", mode="a", encoding="utf-8", delay=False)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s)")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 def hello_client():
     """Приветствие клиента с добрым утром и т.д. В зависимости от времени дня"""
@@ -79,6 +86,8 @@ def cards(data_frame: pd.DataFrame) -> list:
 # print(cards(list_dicts))
 
 def top_transactions(last_dict: list[dict[str, str]]) -> list:
+    """Функция возвращает топ 5 транзакций"""
+
     top_5 = last_dict.sort_values("Сумма операции с округлением", ascending=False).head(5)
     result_top = top_5.rename(
         columns={
@@ -89,6 +98,7 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
         }
     )[["date", "amount", "category", "description"]].to_dict("records")
 
+    logger.info(f"Получение топ 5 транзакций")
     return result_top
 
 
@@ -126,6 +136,7 @@ def currency_rate(file_path: str) -> list:
             results.append({"currency": currency, "rate": round(json_data["result"], 2)})
 
         except requests.exceptions.RequestException:
+            logger.info(f"Ошибка при получении курса для {currency}")
             print(f"Ошибка при получении курса для {currency}")
             results.append({"currency": currency, "rate": 0.0})
 

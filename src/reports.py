@@ -5,6 +5,14 @@ from datetime import datetime
 from typing import Optional
 import os
 from functools import wraps
+import logging
+
+logger = logging.getLogger("reports")
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler("logs/reports.log", mode="w", encoding="utf-8", delay=False)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s)")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 def report_to_file(func):
     """Декоратор для записи результатов отчета в файл"""
@@ -23,7 +31,7 @@ def report_to_file(func):
         os.makedirs(reports_dir, exist_ok=True)
 
         file_path = os.path.join(reports_dir, f"{now}_report.json") ## Формируем полный путь к файлу
-
+        logger.info(f"Записываем данные в директорию ")
         with open(file_path, 'w', encoding='utf-8') as f:
         # json.dump(result, f, ensure_ascii=False, indent=4)
             f.write(result)
