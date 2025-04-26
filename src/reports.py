@@ -25,7 +25,8 @@ def report_to_file(func):
         file_path = os.path.join(reports_dir, f"{now}_report.json") ## Формируем полный путь к файлу
 
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(result, f, ensure_ascii=False, indent=4)
+        # json.dump(result, f, ensure_ascii=False, indent=4)
+            f.write(result)
 
         return result
     return inner
