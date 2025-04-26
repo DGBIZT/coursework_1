@@ -1,13 +1,8 @@
 import pandas as pd
 import os
 
-
-
-import requests
-from dotenv import load_dotenv
-
 def simple_search(file_path: str ): #, search: str
-
+    """Функция создает поиск по категории или по описанию"""
     bas_dir = os.path.dirname(__file__)
     full_path = os.path.join(bas_dir, file_path)
 
@@ -27,5 +22,5 @@ def simple_search(file_path: str ): #, search: str
             return json_data
 
 
-file_path = simple_search("../data/operations.xlsx")
-print(file_path)
+# file_path = simple_search("../data/operations.xlsx")
+# print(file_path)

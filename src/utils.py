@@ -25,7 +25,7 @@ def hello_client():
         return "Добрый вечер"
 
 
-def read_transactions_excel_and_output(file_path: str, date: str) -> pd.DataFrame:
+def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.DataFrame:
     """Функция для считывания финансовых операций из Excel"""
 
     bas_dir = os.path.dirname(__file__)
@@ -49,8 +49,17 @@ def read_transactions_excel_and_output(file_path: str, date: str) -> pd.DataFram
     return date_df
 
 
-# list_dicts = read_transactions_excel_and_output("../data/operations.xlsx", "31.12.2021 16:44:00")
+# list_dicts = read_transactions_excel_and_output_main("../data/operations.xlsx", "31.12.2021 16:44:00")
 # print(list_dicts)
+
+
+def enter_input_main() -> pd.DataFrame:
+    """Функция для ввода пользователем даты и время"""
+    date_enter = input("Введите дату в формате d.m.Y H:M:S \n")
+    struct_file_json = read_transactions_excel_and_output_main(
+        "../data/operations.xlsx", date_enter
+    )
+    return struct_file_json
 
 
 def cards(data_frame: pd.DataFrame) -> list:
