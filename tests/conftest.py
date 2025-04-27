@@ -6,14 +6,6 @@ import tempfile
 import pandas as pd
 
 
-# @pytest.fixture(scope="function") #autouse=True
-# def temp_log_dir(monkeypatch):
-#     with tempfile.TemporaryDirectory() as temp_dir:
-#         # Меняем путь к логам на временную директорию
-#         monkeypatch.setattr('src.utils.LOG_PATH', os.path.join(temp_dir, 'utils.log'))
-#         yield
-
-
 # Создаем заглушку для input, так как в тестах нельзя использовать реальный ввод
 @pytest.fixture
 def mock_input():
@@ -86,3 +78,6 @@ def test_transactions():
         'Сумма': [1000, 2000, 1500, 3000]
     }
     return pd.DataFrame(data)
+
+# services.py функция simple_search
+# Подготовка тестовых данных

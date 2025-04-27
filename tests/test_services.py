@@ -1,75 +1,66 @@
-# import os, logging
-# import pandas as pd
-# import pytest
-# from unittest.mock import patch
-# from io import StringIO
-# from src.services import simple_search
-#
-#
-# @pytest.fixture(autouse=True)
-# def disable_logging():
-#     logging.disable(logging.CRITICAL)
-#     yield
-#     logging.disable(logging.NOTSET)
-#
-#
-#
-# # Создаем тестовый Excel файл в памяти
-# TEST_EXCEL_DATA = StringIO('''
-# Описание,Категория,Значение
-# Тест,Категория1,100
-# Пример,Категория2,200
-# Поиск,Категория1,300
-# ''')
-#
-# # Создаем тестовый файл в директории тестов
-# TEST_FILE_PATH = 'test_data.xlsx'
-#
-# def setup_module():
-#     # Создаем тестовый Excel файл
-#     df = pd.read_csv(TEST_EXCEL_DATA)
-#     df.to_excel(TEST_FILE_PATH, index=False)
-#
-#
-# def teardown_module():
-#     # Удаляем тестовый файл после тестов
-#     if os.path.exists(TEST_FILE_PATH):
-#         os.remove(TEST_FILE_PATH)
-#
-#
-# def test_simple_search_existing_data(mock_input):
-#     # Тестируем поиск существующего значения
-#     mock_input.return_value = 'Тест'
-#     result = simple_search(TEST_FILE_PATH)
-#     assert '"Описание":"Тест"' in result
-#     assert '"Категория":"Категория1"' in result
-#
-#
-# def test_simple_search_non_existing_data(mock_input):
-#     # Тестируем поиск несуществующего значения
-#     mock_input.return_value = 'Не существует'
-#     result = simple_search(TEST_FILE_PATH)
-#     assert result == "По данному запросу отсутствуют транзакции"
-#
-#
-# def test_simple_search_empty_input(mock_input):
-#     # Тестируем пустой ввод
-#     mock_input.return_value = ''
-#     result = simple_search(TEST_FILE_PATH)
-#     assert result is None  # Функция должна вернуть None при пустом вводе
-#
-#
-# def test_simple_search_wrong_file_path():
-#     # Тестируем неверный путь к файлу
-#     with pytest.raises(FileNotFoundError):
-#         simple_search('неверный_путь.xlsx')
-#
-#
-# def test_simple_search_missing_columns(mock_input):
-#     # Тестируем отсутствие необходимых столбцов
-#     mock_input.return_value = 'Тест'
-#     wrong_columns_df = pd.DataFrame({'Неверное_описание': ['Тест'], 'Неверная_категория': ['Категория1']})
-#     wrong_columns_df.to_excel('wrong_columns.xlsx', index=False)
-#
-#     with pytest.raises(KeyError):
-#         simple_search('wrong_columns.xlsx')
+import pytest
+import logging
+from io import StringIO
+import pandas as pd
+import os
+from unittest.mock import patch
+from src.services import simple_search
+
+
+logger = logging.getLogger("services")
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler("logs/services.log", mode="w", encoding="utf-8", delay=False)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# Подготовка тестовых данных
+TEST_DATA = {
+    "Категория": ["Продукты", "Одежда", "Продукты"],
+    "Описание": ["Молоко", "Футболка", "Хлеб"],
+    "Сумма": [100, 200, 150]
+}
+
+@pytest.fixture
+def temp_excel_file(tmpdir):
+    excel_path = os.path.join(tmpdir, "test_data.xlsx")
+    df = pd.DataFrame(TEST_DATA)
+    df.to_excel(excel_path, index=False)
+    return excel_path
+
+# Тестовый кейс 1: успешный поиск по категории
+def test_search_by_category(temp_excel_file):
+    with patch('builtins.input', return_value='Продукты'):
+        result = simple_search(temp_excel_file)
+        expected = pd.DataFrame(TEST_DATA).query("Категория == 'Продукты'").to_json(orient='records', force_ascii=False, indent=4)
+        assert result == expected
+
+# Тестовый кейс 2: успешный поиск по описанию
+def test_search_by_description(temp_excel_file):
+    with patch('builtins.input', return_value='Молоко'):
+        result = simple_search(temp_excel_file)
+        expected = pd.DataFrame(TEST_DATA).query("Описание == 'Молоко'").to_json(orient='records', force_ascii=False, indent=4)
+        assert result == expected
+
+# Тестовый кейс 3: отсутствие данных
+def test_no_data_found(temp_excel_file):
+    with patch('builtins.input', return_value='Неверный запрос'):
+        result = simple_search(temp_excel_file)
+        assert result == "По данному запросу отсутствуют транзакции"
+
+# Тестовый кейс 4: проверка вывода логов
+def test_logging(temp_excel_file, caplog):
+    with patch('builtins.input', return_value='Продукты'):
+        simple_search(temp_excel_file)
+        assert "преобразования данных в строку в формате JSON" in caplog.text
+
+# Тестовый кейс 5: проверка обработки пустого ввода
+def test_empty_input(temp_excel_file):
+    with patch('builtins.input', return_value=''):
+        result = simple_search(temp_excel_file)
+        assert result is None  # Функция должна вернуть None при пустом вводе
+
+# Тестовый кейс 6: проверка обработки несуществующего файла
+def test_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        simple_search("несуществующий_файл.xlsx")

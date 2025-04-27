@@ -73,47 +73,6 @@ def teardown_module():
 
 #reports def spending_by_category
 
-# Тест на корректную работу с существующими категориями
-
-# def test_existing_category(test_transactions):
-#     # Проверяем существующую категорию
-#     result = spending_by_category(test_transactions, 'Еда')
-#
-#     # Создаем ожидаемый DataFrame с правильными датами
-#     expected = pd.DataFrame({
-#         'Дата платежа': ['2025-01-01', '2025-01-03'],  # Исправленные даты
-#         'Категория': ['Еда', 'Еда'],
-#         'Сумма': [1000, 1500]
-#     })
-#
-#     # Проверяем, что результат - JSON строка
-#     assert isinstance(result, str)
-#
-#     # Преобразуем JSON обратно в DataFrame
-#     # Указываем правильные имена столбцов
-#     result_df = pd.read_json(result, orient='records')
-#     result_df.columns = ['Дата платежа', 'Категория', 'Сумма']  # Восстанавливаем имена столбцов
-#
-#     # Проверяем формат дат в полученном DataFrame
-#     result_df['Дата платежа'] = pd.to_datetime(result_df['Дата платежа'])
-#     expected['Дата платежа'] = pd.to_datetime(expected['Дата платежа'])
-#
-#     # Проверяем равенство DataFrames
-#     pd.testing.assert_frame_equal(
-#         result_df.sort_values('Дата платежа').reset_index(drop=True),
-#         expected.sort_values('Дата платежа').reset_index(drop=True),
-#         check_dtype=True,
-#         check_like=True
-#     )
-#
-#     # Дополнительно проверяем:
-#     assert result_df.shape == (2, 3)
-#     assert 'Дата платежа' in result_df.columns
-#     assert 'Категория' in result_df.columns
-#     assert 'Сумма' in result_df.columns
-#     assert result_df['Категория'].nunique() == 1  # Должна быть только категория 'Еда'
-#     assert result_df['Сумма'].sum() == 2500  # Сумма всех транзакций
-
 
 
 # Тест на обработку отсутствующей категории
