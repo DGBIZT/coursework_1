@@ -76,3 +76,13 @@ def ensure_log_dir():
     log_dir = os.path.join(os.path.dirname(__file__), '../logs')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+
+# Reports def spending_by_category
+@pytest.fixture
+def test_transactions():
+    data = {
+        'Дата платежа': ['01.01.2025', '01.02.2025', '01.03.2025', '01.04.2025'],
+        'Категория': ['Еда', 'Транспорт', 'Еда', 'Развлечения'],
+        'Сумма': [1000, 2000, 1500, 3000]
+    }
+    return pd.DataFrame(data)
