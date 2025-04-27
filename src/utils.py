@@ -96,7 +96,7 @@ def cards(data_frame: pd.DataFrame) -> list:
         new_list_dict.append({"last_digits": card, "total_spent": round(value, 2), "cashback": round(value / 100, 2)})
 
     return new_list_dict
-print(cards(list_dicts))
+# print(cards(list_dicts))
 
 def top_transactions(last_dict: list[dict[str, str]]) -> list:
     """Функция возвращает топ 5 транзакций"""
