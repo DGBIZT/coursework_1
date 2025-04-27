@@ -1,0 +1,51 @@
+import pytest
+import logging
+from unittest.mock import patch, mock_open
+import os
+import tempfile
+import pandas as pd
+
+@pytest.fixture(autouse=True)
+def temp_log_dir(monkeypatch):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Меняем путь к логам на временную директорию
+        monkeypatch.setattr('src.utils.LOG_PATH', os.path.join(temp_dir, 'utils.log'))
+        yield
+
+
+# Создаем заглушку для input, так как в тестах нельзя использовать реальный ввод
+@pytest.fixture
+def mock_input():
+    with patch('builtins.input', autospec=True) as mocked_input:
+        yield mocked_input
+
+# Создаем заглушку для чтения файла Excel
+@pytest.fixture
+def mock_read_excel():
+    with patch('pandas.read_excel') as mocked_read_excel:
+        yield mocked_read_excel
+
+# Создаем заглушку для логгера
+@pytest.fixture(autouse=True)
+def mock_logging(monkeypatch):
+    # Замокаем FileHandler чтобы не создавать реальные файлы
+    monkeypatch.setattr('logging.FileHandler', mock_open())
+
+# Фикстура для def cards(data_frame: pd.DataFrame) -> list:
+# Тестовые данные для функции cards()
+@pytest.fixture
+def test_data_frame():
+    return pd.DataFrame({
+        'Номер карты': ['*1111', '*2222', '*1111'],
+        'Сумма операции с округлением': [100.5, 200.3, 150.0]
+    })
+
+# Тестовые данные для функции top_transactions()
+@pytest.fixture
+def test_transactions_df():
+    return pd.DataFrame({
+        'Дата платежа': ['2025-04-27', '2025-04-26', '2025-04-25', '2025-04-24', '2025-04-23', '2025-04-22'],
+        'Сумма операции с округлением': [1000, 500, 1500, 800, 900, 400],
+        'Категория': ['Еда', 'Транспорт', 'Одежда', 'Развлечения', 'Еда', 'Транспорт'],
+        'Описание': ['Ресторан', 'Метро', 'Магазин', 'Кино', 'Кафе', 'Автобус']
+    })

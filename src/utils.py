@@ -9,18 +9,19 @@ import requests
 from dotenv import load_dotenv
 import logging
 
+LOG_PATH = os.path.join(os.path.dirname(__file__), '../logs/utils.log')
 logger = logging.getLogger("utils")
 logger.setLevel(logging.DEBUG)
-file_handler = logging.FileHandler("logs/utils.log", mode="a", encoding="utf-8", delay=False)
+file_handler = logging.FileHandler(LOG_PATH, mode='a', encoding='utf-8')
 file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s)")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
-def hello_client():
+def hello_client(current_time=None):
     """Приветствие клиента с добрым утром и т.д. В зависимости от времени дня"""
-    now = datetime.now()
-    # Создал переменную hour, куда получил значение текущего времени в часах now.hour
-    hour = now.hour
+    if current_time is None:
+        current_time = datetime.now()
+    hour = current_time.hour
 
     if 0 < hour <= 6:
         return "Доброй ночи"
@@ -30,6 +31,7 @@ def hello_client():
         return "Добрый день!"
     elif 18 < hour <= 24:
         return "Добрый вечер"
+
 
 
 def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.DataFrame:
@@ -56,17 +58,28 @@ def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.Dat
     return date_df
 
 
-# list_dicts = read_transactions_excel_and_output_main("../data/operations.xlsx", "31.12.2021 16:44:00")
+list_dicts = read_transactions_excel_and_output_main("../data/operations.xlsx", "31.12.2021 16:44:00")
 # print(list_dicts)
 
 
 def enter_input_main() -> pd.DataFrame:
     """Функция для ввода пользователем даты и время"""
-    date_enter = input("Введите дату в формате d.m.Y H:M:S \n")
+
+    while True:
+        try:
+            date_enter = input("Введите дату в формате d.m.Y H:M:S \n")
+            datetime.strptime(date_enter, '%d.%m.%Y %H:%M:%S')
+            logger.info(f"Верный формат даты d.m.Y H:M:S")
+            break
+        except ValueError:
+            logger.info(f"Неверный формат даты. Используйте d.m.Y H:M:S")
+            print("Неверный формат даты. Используйте d.m.Y H:M:S")
+
     struct_file_json = read_transactions_excel_and_output_main(
         "../data/operations.xlsx", date_enter
     )
     return struct_file_json
+
 
 
 def cards(data_frame: pd.DataFrame) -> list:
@@ -82,8 +95,8 @@ def cards(data_frame: pd.DataFrame) -> list:
     for card, value in new_dict.items():
         new_list_dict.append({"last_digits": card, "total_spent": round(value, 2), "cashback": round(value / 100, 2)})
 
-    return sum_dict
-# print(cards(list_dicts))
+    return new_list_dict
+print(cards(list_dicts))
 
 def top_transactions(last_dict: list[dict[str, str]]) -> list:
     """Функция возвращает топ 5 транзакций"""
