@@ -29,22 +29,22 @@ def report_to_file(func):
         return result
     return inner
 
-def read_xlsx_file(file_path: str) -> pd.DataFrame:
-    base_dir = os.path.dirname(__file__)
-    if base_dir:
-        full_path = os.path.join(base_dir, file_path)
-    else:
-        full_path = os.path.abspath(file_path)
-    try:
-        excel_data = pd.read_excel(full_path, engine='openpyxl')
-        excel_data = excel_data.fillna(value="")
-        return excel_data
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Файл не найден: {full_path}")
-    except PermissionError:
-        raise PermissionError(f"Нет прав доступа к файлу: {full_path}")
-    except Exception as e:
-        raise ValueError(f"Ошибка чтения файла: {str(e)}")
+# def read_xlsx_file(file_path: str) -> pd.DataFrame:
+#     base_dir = os.path.dirname(__file__)
+#     if base_dir:
+#         full_path = os.path.join(base_dir, file_path)
+#     else:
+#         full_path = os.path.abspath(file_path)
+#     try:
+#         excel_data = pd.read_excel(full_path, engine='openpyxl')
+#         excel_data = excel_data.fillna(value="")
+#         return excel_data
+#     except FileNotFoundError:
+#         raise FileNotFoundError(f"Файл не найден: {full_path}")
+#     except PermissionError:
+#         raise PermissionError(f"Нет прав доступа к файлу: {full_path}")
+#     except Exception as e:
+#         raise ValueError(f"Ошибка чтения файла: {str(e)}")
 
 
 # def report_to_file(func):
@@ -129,8 +129,8 @@ def spending_by_category(transactions: pd.DataFrame,
     sim_sea = filtered_data[(filtered_data["Категория"] == category)]
 
     # Форматируем дату перед конвертацией в JSON
-    sim_sea.loc[:, 'Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
-    # sim_sea['Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
+    # sim_sea.loc[:, 'Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
+    sim_sea['Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
 
     # Затем проверяем свойство .empty у DataFrame - оно возвращает True, если DataFrame пустой
     if sim_sea.empty:
