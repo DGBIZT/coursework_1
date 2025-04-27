@@ -129,7 +129,8 @@ def spending_by_category(transactions: pd.DataFrame,
     sim_sea = filtered_data[(filtered_data["Категория"] == category)]
 
     # Форматируем дату перед конвертацией в JSON
-    sim_sea['Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
+    sim_sea.loc[:, 'Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
+    # sim_sea['Дата платежа'] = sim_sea['Дата платежа'].dt.strftime('%d.%m.%Y')
 
     # Затем проверяем свойство .empty у DataFrame - оно возвращает True, если DataFrame пустой
     if sim_sea.empty:
