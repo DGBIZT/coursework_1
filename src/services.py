@@ -32,5 +32,5 @@ def simple_search(file_path: str ): #, search: str
             return json_data
 
 
-file_path = simple_search("../data/operations.xlsx")
-print(file_path)
+# file_path = simple_search("../data/operations.xlsx")
+# print(file_path)

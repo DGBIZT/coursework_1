@@ -1,16 +1,17 @@
 import pytest
 import logging
 from unittest.mock import patch, mock_open
-import os
+import os, json
 import tempfile
 import pandas as pd
 
-@pytest.fixture(autouse=True)
-def temp_log_dir(monkeypatch):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        # Меняем путь к логам на временную директорию
-        monkeypatch.setattr('src.utils.LOG_PATH', os.path.join(temp_dir, 'utils.log'))
-        yield
+
+# @pytest.fixture(scope="function") #autouse=True
+# def temp_log_dir(monkeypatch):
+#     with tempfile.TemporaryDirectory() as temp_dir:
+#         # Меняем путь к логам на временную директорию
+#         monkeypatch.setattr('src.utils.LOG_PATH', os.path.join(temp_dir, 'utils.log'))
+#         yield
 
 
 # Создаем заглушку для input, так как в тестах нельзя использовать реальный ввод
@@ -49,3 +50,29 @@ def test_transactions_df():
         'Категория': ['Еда', 'Транспорт', 'Одежда', 'Развлечения', 'Еда', 'Транспорт'],
         'Описание': ['Ресторан', 'Метро', 'Магазин', 'Кино', 'Кафе', 'Автобус']
     })
+
+@pytest.fixture
+def test_stocks_file(tmp_path):
+    file_path = tmp_path / "test_stocks.json"
+    data = [
+        {"stock": "AAPL", "price": 150.25},
+        {"stock": "GOOGL", "price": 150.25}
+    ]
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+    return file_path
+
+
+
+# Для services def simple_search(file_path: str ):
+@pytest.fixture
+def mock_input():
+    # Создаем фиктивный ввод для функции input()
+    with patch('builtins.input') as mocked_input:
+        yield mocked_input
+
+@pytest.fixture(autouse=True)
+def ensure_log_dir():
+    log_dir = os.path.join(os.path.dirname(__file__), '../logs')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)

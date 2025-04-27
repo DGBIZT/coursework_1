@@ -158,40 +158,67 @@ def currency_rate(file_path: str) -> list:
 
 # print(currency_rate("../data/user_settings.json"))
 
-
 def user_stocks(file_path: str) -> list:
     """Функция возвращает стоимость акций в формате списка словарей"""
     base_dir = os.path.dirname(__file__)
     full_path = os.path.join(base_dir, file_path)
-
     with open(full_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    if "user_stocks" in data:
-        st_prices = data["user_stocks"]
-
+    # Исправляем обработку данных
+    st_prices = data.get("user_stocks", [])
     results = []
+
     for st_pr in st_prices:
         load_dotenv()
         api_key = os.getenv("Alpha_Vantage_API")
-
-        # Делаем запрос к API
         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={st_pr}&apikey={api_key}"
         headers = {"apikey": api_key}
-
         try:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
             json_data = response.json()
             cost = json_data["Global Quote"]["05. price"]
             cost = float(cost)
-
             results.append({"stock": st_pr, "price": cost})
-
         except requests.exceptions.RequestException:
             print(f"Ошибка при получении стоимости {st_pr}")
             results.append({"stock": st_pr, "price": 0.0})
     return results
+
+# def user_stocks(file_path: str) -> list:
+#     """Функция возвращает стоимость акций в формате списка словарей"""
+#     base_dir = os.path.dirname(__file__)
+#     full_path = os.path.join(base_dir, file_path)
+#
+#     with open(full_path, "r", encoding="utf-8") as f:
+#         data = json.load(f)
+#
+#     if "user_stocks" in data:
+#         st_prices = data["user_stocks"]
+#
+#     results = []
+#     for st_pr in st_prices:
+#         load_dotenv()
+#         api_key = os.getenv("Alpha_Vantage_API")
+#
+#         # Делаем запрос к API
+#         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={st_pr}&apikey={api_key}"
+#         headers = {"apikey": api_key}
+#
+#         try:
+#             response = requests.get(url, headers=headers)
+#             response.raise_for_status()
+#             json_data = response.json()
+#             cost = json_data["Global Quote"]["05. price"]
+#             cost = float(cost)
+#
+#             results.append({"stock": st_pr, "price": cost})
+#
+#         except requests.exceptions.RequestException:
+#             print(f"Ошибка при получении стоимости {st_pr}")
+#             results.append({"stock": st_pr, "price": 0.0})
+#     return results
 
 
 # print(user_stocks("../data/user_settings.json"))

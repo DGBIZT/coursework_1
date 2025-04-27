@@ -201,68 +201,79 @@ def test_currency_rate_no_api_key(monkeypatch):
     assert result == [{"currency": "USD", "rate": 0.0}, {"currency": "EUR", "rate": 0.0}]
 
 #Тест на проверку user_stocks
-TEST_JSON = {
-    "user_stocks": ["AAPL", "GOOGL"]
-}
+TEST_JSON = [
+    {"stock": "AAPL"},
+    {"stock": "GOOGL"}
+]
 
 # Создаем тестовый файл
-TEST_FILE_PATH = "test_stocks.json"
+TEST_FILE_PATH = os.path.join(os.path.dirname(__file__), "test_stocks.json")
+
 
 # Функция для создания тестового JSON файла
-def create_test_file():
+def create_test_file(data):
     with open(TEST_FILE_PATH, "w", encoding="Utf-8") as f:
-        json.dump(TEST_JSON, f)
+        json.dump({"user_stocks": data["user_stocks"]}, f)
 
 # Функция для удаления тестового файла
-# def delete_test_file():
-#     if os.path.exists(TEST_FILE_PATH):
-#         os.remove(TEST_FILE_PATH)
-#
-# # Тестовый класс
-# class TestUserStocks:
-#     def setup_method(self):
-#         create_test_file()
-#
-#     def teardown_method(self):
-#         delete_test_file()
-#
-#     @pytest.fixture(autouse=True)
-#     def mock_env(self):
-#         with patch.dict('os.environ', {"Alpha_Vantage_API": "test_api_key"}):
-#             yield
-#
-#     @pytest.fixture
-#     def mock_requests(self):
-#         with patch('requests.get') as mock_get:
-#             mock_response = {
-#                 "Global Quote": {
-#                     "05. price": "150.25"
-#                 }
-#             }
-#             mock_get.return_value.json.return_value = mock_response
-#             mock_get.return_value.status_code = 200
-#             yield mock_get
+def delete_test_file():
+    if os.path.exists(TEST_FILE_PATH):  # Проверяем путь, а не данные
+        os.remove(TEST_FILE_PATH)
 
-    # def test_user_stocks_success(self, mock_requests):
-    #
-    #     result = user_stocks(TEST_FILE_PATH)
-    #
-    #     assert len(result) == 2
-    #     assert result[0] == {"stock": "AAPL", "price": 150.25}
-    #     assert result[1] == {"stock": "GOOGL", "price": 150.25}
-    #
-    #     mock_requests.assert_called_times(2)
 
-#     def test_user_stocks_file_not_found(self):
-#         with pytest.raises(FileNotFoundError):
-#             user_stocks("non_existent_file.json")
-# #
-#     def test_user_stocks_api_error(self, mock_requests):
-#
-#         mock_requests.side_effect = requests.exceptions.RequestException
-#
-#         result = user_stocks(TEST_FILE_PATH)
-#
-#         assert len(result) == 2
-#         assert result[0] == {"stock": "AAPL", "price": 0.0}
-#         assert result[1] == {"stock": "GOOGL", "price": 0.0}
+# Тестовый класс
+class TestUserStocks:
+    def setup_method(self):
+        self.test_data = {
+            "user_stocks": ["AAPL", "GOOGL"]
+        }
+        create_test_file(self.test_data)  # или просто create_test_file()
+
+    def teardown_method(self):
+        delete_test_file()
+
+    @pytest.fixture(autouse=True)
+    def mock_env(self):
+        with patch.dict('os.environ', {"Alpha_Vantage_API": "test_api_key"}):
+            yield
+
+    @pytest.fixture
+    def mock_requests(self):
+        with patch('requests.get') as mock_get:
+            mock_response = {
+                "Global Quote": {
+                    "05. price": "150.25"
+                }
+            }
+            mock_get.return_value.json.return_value = mock_response
+            mock_get.return_value.status_code = 200
+            yield mock_get
+
+    def test_user_stocks_success(self, mock_requests):
+        print("Мок вызван с аргументами:", mock_requests.call_args_list)
+        print("Файл существует:", os.path.exists(TEST_FILE_PATH))
+        print("Полный путь:", os.path.abspath(TEST_FILE_PATH))
+
+        # Добавляем проверку существования файла
+        assert os.path.exists(TEST_FILE_PATH)
+
+        result = user_stocks(TEST_FILE_PATH)
+        assert len(result) == 2
+        assert result[0] == {"stock": "AAPL", "price": 150.25}
+        assert result[1] == {"stock": "GOOGL", "price": 150.25}
+        assert mock_requests.call_count == 2
+
+    def test_user_stocks_file_not_found(self):
+        with pytest.raises(FileNotFoundError):
+            user_stocks("non_existent_file.json")
+
+    def test_user_stocks_api_error(self, mock_requests):
+
+        mock_requests.side_effect = requests.exceptions.RequestException
+
+        result = user_stocks(TEST_FILE_PATH)
+
+        assert len(result) == 2
+        assert result[0] == {"stock": "AAPL", "price": 0.0}
+        assert result[1] == {"stock": "GOOGL", "price": 0.0}
+
