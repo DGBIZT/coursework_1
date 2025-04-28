@@ -1,7 +1,7 @@
 import json
 import logging
 
-from utils import cards, currency_rate, enter_input_main, hello_client, top_transactions, user_stocks
+from src.utils import cards, currency_rate, enter_input_main, hello_client, top_transactions, user_stocks
 
 logger = logging.getLogger("views")
 logger.setLevel(logging.DEBUG)
@@ -27,4 +27,4 @@ def page_main():
     return json_data
 
 
-print(page_main())
+# print(page_main())

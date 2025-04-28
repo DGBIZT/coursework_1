@@ -100,6 +100,5 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
 
 
 # data_frame_new = read_xlsx_file("../data/operations.xlsx")
-#
 # report_category = spending_by_category(data_frame_new, "ЖКХ", "31.12.2021")
 # print(report_category)

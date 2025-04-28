@@ -59,7 +59,7 @@ def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.Dat
     return date_df
 
 
-list_dicts = read_transactions_excel_and_output_main("../data/operations.xlsx", "31.12.2021 16:44:00")
+# list_dicts = read_transactions_excel_and_output_main("../data/operations.xlsx", "31.12.2021 16:44:00")
 # print(list_dicts)
 
 

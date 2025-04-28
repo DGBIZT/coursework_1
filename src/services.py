@@ -18,8 +18,8 @@ def simple_search(file_path: str):  # , search: str
 
     excel_data = pd.read_excel(full_path)
 
-    print("Поиск осуществляется по категории или по описанию")
-    search_enter = input("Введите запрос \n")
+    print("Поиск осуществляется по категории или по описанию.")
+    search_enter = input("Введите запрос. \n")
 
     if search_enter:
         # Осуществляем поиск по двум столбцам
@@ -31,6 +31,7 @@ def simple_search(file_path: str):  # , search: str
         else:
             logger.info("преобразования данных в строку в формате JSON ")
             json_data = sim_sea.to_json(orient="records", force_ascii=False, indent=4)
+
             return json_data
 
 
