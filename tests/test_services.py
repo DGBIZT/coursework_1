@@ -1,11 +1,11 @@
-import pytest
 import logging
-from io import StringIO
-import pandas as pd
 import os
 from unittest.mock import patch
-from src.services import simple_search
 
+import pandas as pd
+import pytest
+
+from src.services import simple_search
 
 logger = logging.getLogger("services")
 logger.setLevel(logging.DEBUG)
@@ -18,8 +18,9 @@ logger.addHandler(file_handler)
 TEST_DATA = {
     "Категория": ["Продукты", "Одежда", "Продукты"],
     "Описание": ["Молоко", "Футболка", "Хлеб"],
-    "Сумма": [100, 200, 150]
+    "Сумма": [100, 200, 150],
 }
+
 
 @pytest.fixture
 def temp_excel_file(tmpdir):
@@ -28,37 +29,51 @@ def temp_excel_file(tmpdir):
     df.to_excel(excel_path, index=False)
     return excel_path
 
+
 # Тестовый кейс 1: успешный поиск по категории
 def test_search_by_category(temp_excel_file):
-    with patch('builtins.input', return_value='Продукты'):
+    with patch("builtins.input", return_value="Продукты"):
         result = simple_search(temp_excel_file)
-        expected = pd.DataFrame(TEST_DATA).query("Категория == 'Продукты'").to_json(orient='records', force_ascii=False, indent=4)
+        expected = (
+            pd.DataFrame(TEST_DATA)
+            .query("Категория == 'Продукты'")
+            .to_json(orient="records", force_ascii=False, indent=4)
+        )
         assert result == expected
+
 
 # Тестовый кейс 2: успешный поиск по описанию
 def test_search_by_description(temp_excel_file):
-    with patch('builtins.input', return_value='Молоко'):
+    with patch("builtins.input", return_value="Молоко"):
         result = simple_search(temp_excel_file)
-        expected = pd.DataFrame(TEST_DATA).query("Описание == 'Молоко'").to_json(orient='records', force_ascii=False, indent=4)
+        expected = (
+            pd.DataFrame(TEST_DATA)
+            .query("Описание == 'Молоко'")
+            .to_json(orient="records", force_ascii=False, indent=4)
+        )
         assert result == expected
+
 
 # Тестовый кейс 3: отсутствие данных
 def test_no_data_found(temp_excel_file):
-    with patch('builtins.input', return_value='Неверный запрос'):
+    with patch("builtins.input", return_value="Неверный запрос"):
         result = simple_search(temp_excel_file)
         assert result == "По данному запросу отсутствуют транзакции"
 
+
 # Тестовый кейс 4: проверка вывода логов
 def test_logging(temp_excel_file, caplog):
-    with patch('builtins.input', return_value='Продукты'):
+    with patch("builtins.input", return_value="Продукты"):
         simple_search(temp_excel_file)
         assert "преобразования данных в строку в формате JSON" in caplog.text
 
+
 # Тестовый кейс 5: проверка обработки пустого ввода
 def test_empty_input(temp_excel_file):
-    with patch('builtins.input', return_value=''):
+    with patch("builtins.input", return_value=""):
         result = simple_search(temp_excel_file)
         assert result is None  # Функция должна вернуть None при пустом вводе
+
 
 # Тестовый кейс 6: проверка обработки несуществующего файла
 def test_file_not_found():

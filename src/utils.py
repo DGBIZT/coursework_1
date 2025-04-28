@@ -1,21 +1,23 @@
-import datetime
+# import datetime
 import json
+import logging
 import os
+
 # from collections import defaultdict
 from datetime import datetime
 
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-import logging
 
-LOG_PATH = os.path.join(os.path.dirname(__file__), '../logs/utils.log')
+LOG_PATH = os.path.join(os.path.dirname(__file__), "../logs/utils.log")
 logger = logging.getLogger("utils")
 logger.setLevel(logging.DEBUG)
-file_handler = logging.FileHandler(LOG_PATH, mode='a', encoding='utf-8')
+file_handler = logging.FileHandler(LOG_PATH, mode="a", encoding="utf-8")
 file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s)")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
+
 
 def hello_client(current_time=None):
     """Приветствие клиента с добрым утром и т.д. В зависимости от времени дня"""
@@ -31,7 +33,6 @@ def hello_client(current_time=None):
         return "Добрый день!"
     elif 18 < hour <= 24:
         return "Добрый вечер"
-
 
 
 def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.DataFrame:
@@ -68,18 +69,15 @@ def enter_input_main() -> pd.DataFrame:
     while True:
         try:
             date_enter = input("Введите дату в формате d.m.Y H:M:S \n")
-            datetime.strptime(date_enter, '%d.%m.%Y %H:%M:%S')
-            logger.info(f"Верный формат даты d.m.Y H:M:S")
+            datetime.strptime(date_enter, "%d.%m.%Y %H:%M:%S")
+            logger.info("Верный формат даты d.m.Y H:M:S")
             break
         except ValueError:
-            logger.info(f"Неверный формат даты. Используйте d.m.Y H:M:S")
+            logger.info("Неверный формат даты. Используйте d.m.Y H:M:S")
             print("Неверный формат даты. Используйте d.m.Y H:M:S")
 
-    struct_file_json = read_transactions_excel_and_output_main(
-        "../data/operations.xlsx", date_enter
-    )
+    struct_file_json = read_transactions_excel_and_output_main("../data/operations.xlsx", date_enter)
     return struct_file_json
-
 
 
 def cards(data_frame: pd.DataFrame) -> list:
@@ -96,7 +94,10 @@ def cards(data_frame: pd.DataFrame) -> list:
         new_list_dict.append({"last_digits": card, "total_spent": round(value, 2), "cashback": round(value / 100, 2)})
 
     return new_list_dict
+
+
 # print(cards(list_dicts))
+
 
 def top_transactions(last_dict: list[dict[str, str]]) -> list:
     """Функция возвращает топ 5 транзакций"""
@@ -111,7 +112,7 @@ def top_transactions(last_dict: list[dict[str, str]]) -> list:
         }
     )[["date", "amount", "category", "description"]].to_dict("records")
 
-    logger.info(f"Получение топ 5 транзакций")
+    logger.info("Получение топ 5 транзакций")
     return result_top
 
 
@@ -158,6 +159,7 @@ def currency_rate(file_path: str) -> list:
 
 # print(currency_rate("../data/user_settings.json"))
 
+
 def user_stocks(file_path: str) -> list:
     """Функция возвращает стоимость акций в формате списка словарей"""
     base_dir = os.path.dirname(__file__)
@@ -185,6 +187,7 @@ def user_stocks(file_path: str) -> list:
             print(f"Ошибка при получении стоимости {st_pr}")
             results.append({"stock": st_pr, "price": 0.0})
     return results
+
 
 # def user_stocks(file_path: str) -> list:
 #     """Функция возвращает стоимость акций в формате списка словарей"""
