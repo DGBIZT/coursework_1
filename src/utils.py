@@ -2,7 +2,6 @@
 import json
 import logging
 import os
-
 # from collections import defaultdict
 from datetime import datetime
 
@@ -187,57 +186,3 @@ def user_stocks(file_path: str) -> list:
             print(f"Ошибка при получении стоимости {st_pr}")
             results.append({"stock": st_pr, "price": 0.0})
     return results
-
-
-# def user_stocks(file_path: str) -> list:
-#     """Функция возвращает стоимость акций в формате списка словарей"""
-#     base_dir = os.path.dirname(__file__)
-#     full_path = os.path.join(base_dir, file_path)
-#
-#     with open(full_path, "r", encoding="utf-8") as f:
-#         data = json.load(f)
-#
-#     if "user_stocks" in data:
-#         st_prices = data["user_stocks"]
-#
-#     results = []
-#     for st_pr in st_prices:
-#         load_dotenv()
-#         api_key = os.getenv("Alpha_Vantage_API")
-#
-#         # Делаем запрос к API
-#         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={st_pr}&apikey={api_key}"
-#         headers = {"apikey": api_key}
-#
-#         try:
-#             response = requests.get(url, headers=headers)
-#             response.raise_for_status()
-#             json_data = response.json()
-#             cost = json_data["Global Quote"]["05. price"]
-#             cost = float(cost)
-#
-#             results.append({"stock": st_pr, "price": cost})
-#
-#         except requests.exceptions.RequestException:
-#             print(f"Ошибка при получении стоимости {st_pr}")
-#             results.append({"stock": st_pr, "price": 0.0})
-#     return results
-
-
-# print(user_stocks("../data/user_settings.json"))
-
-# def cards(list_dict: list[dict[str, str]]) -> list:
-#     """Создаю список с уникальными значениями карт"""
-#     number_of_cards = set()
-#     for operation in list_dict:
-#         if operation.get("Номер карты") not in number_of_cards:
-#             card_numer = operation.get("Номер карты")
-#             number_of_cards.add(card_numer[1:])
-#     number = list(number_of_cards)
-#     # return number
-#     # Создаю словарь из списка в формате {'last_digits': '7197'} ПОСЛЕДНИИ 4 ЦИФРЫ КАРТЫ
-#     new = []
-#     for i in number:
-#         if i:  # пропускаем пустые строки
-#             new.append({"last_digits": i})
-#     return new

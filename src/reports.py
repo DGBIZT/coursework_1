@@ -16,6 +16,8 @@ logger.addHandler(file_handler)
 
 
 def report_to_file(func):
+    """Декоратор для функций-отчетов, который записывает в файл результат"""
+
     @wraps(func)
     def inner(*args, **kwargs):
         result = func(*args, **kwargs)
@@ -33,6 +35,7 @@ def report_to_file(func):
 
 
 def read_xlsx_file(file_path: str) -> pd.DataFrame:
+    """Функция для считывания финансовых операций из Excel"""
     bas_dir = os.path.dirname(__file__)
     if bas_dir:
         full_path = os.path.join(bas_dir, file_path)
