@@ -1,7 +1,5 @@
+import json
 import logging
-import os
-
-import pandas as pd
 
 logger = logging.getLogger("services")
 logger.setLevel(logging.DEBUG)
@@ -11,29 +9,31 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def simple_search(file_path: str):  # , search: str
-    """Функция создает поиск по категории или по описанию"""
-    bas_dir = os.path.dirname(__file__)
-    full_path = os.path.join(bas_dir, file_path)
+def simple_search(transactions: list, search_query: str) -> str:
+    """
+    Функция осуществляет простой поиск по списку транзакций.
+    Поиск производится по полям 'Описание' и 'Категория'.
 
-    excel_data = pd.read_excel(full_path)
+    Параметры:
+    transactions (list): список словарей с транзакциями
+    search_query (str): строка для поиска
 
-    print("Поиск осуществляется по категории или по описанию.")
-    search_enter = input("Введите запрос. \n")
+    """
 
-    if search_enter:
-        # Осуществляем поиск по двум столбцам
-        sim_sea = excel_data[(excel_data["Описание"] == search_enter) | (excel_data["Категория"] == search_enter)]
-        # Затем проверяем свойство .empty у DataFrame - оно возвращает True, если DataFrame пустой
-        if sim_sea.empty:
-            logger.info("Данные отсутствуют по данному запросу ")
-            return "По данному запросу отсутствуют транзакции"
-        else:
-            logger.info("преобразования данных в строку в формате JSON ")
-            json_data = sim_sea.to_json(orient="records", force_ascii=False, indent=4)
+    # Создаем пустой список для хранения результатов поиска
+    search_results = []
 
-            return json_data
+    # Проходим по всем транзакциям
+    for transaction in transactions:
+        # Проверяем, есть ли поисковый запрос в описании или категории
+        if search_query in transaction["Описание"] or search_query in transaction["Категория"]:
+            search_results.append(transaction)
 
-
-# file_path = simple_search("../data/operations.xlsx")
-# print(file_path)
+    # Если результаты найдены
+    if search_results:
+        # Преобразуем результаты в JSON
+        # Добавляем параметр default для обработки Timestamp
+        json_data = json.dumps(search_results, ensure_ascii=False, indent=4, default=str)
+        return json_data
+    else:
+        return "По данному запросу отсутствуют транзакции"

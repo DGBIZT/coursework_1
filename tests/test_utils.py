@@ -10,29 +10,43 @@ import requests
 from src.utils import cards, currency_rate, enter_input_main, hello_client, top_transactions, user_stocks
 
 
-def test_correct_date_input(mock_input, mock_read_excel):
-    # Заглушка для корректного ввода
-    mock_input.return_value = "31.12.2021 16:44:00"
-    mock_read_excel.return_value = pd.DataFrame({"Дата операции": ["31.12.2021 16:44:00"], "data": [1]})
+# Создадим тестовые данные для проверки
+def create_test_excel(filename):
+    # Создаем тестовый DataFrame "%d.%m.%Y %H:%M:%S"
+    test_data = {
+        "date": ["31.12.2021 16:44:00", "31.12.2021 16:42:04", "31.12.2021 00:12:53"],
+        "amount": [100.0, 200.0, 300.0],
+        "description": ["Покупка", "Продажа", "Перевод"],
+    }
+    df = pd.DataFrame(test_data)
+
+    # Сохраняем в Excel
+    df.to_excel(filename, index=False)
+
+
+# Тест на корректное получение данных
+def test_enter_input_main_correct_data():
+    # Задаем тестовую дату
+    test_date = "31.12.2021 16:44:00"
+
     # Вызываем тестируемую функцию
-    result = enter_input_main()
-    # Проверяем, что input был вызван один раз
-    mock_input.assert_called_once()
-    # Проверяем, что дата была правильно преобразована
-    assert isinstance(result, pd.DataFrame)
-    # logger.info.assert_called_with(ANY)  # ANY - из unittest.mock
+    result_df = enter_input_main(test_date)
 
+    # Проверяем, что результат - DataFrame
+    assert isinstance(result_df, pd.DataFrame)
 
-def test_incorrect_date_input(mock_input):
-    # Заглушка для некорректного ввода
-    mock_input.side_effect = ["31.12.2021 16:44", "31.12.2021 16:44:00"]
+    # Проверяем количество столбцов
+    assert len(result_df.columns) == 15
 
-    # Вызываем тестируемую функцию
-    result = enter_input_main()
+    # Проверяем наличие необходимых столбцов
+    assert "Дата операции" in result_df.columns
+    assert "Сумма операции с округлением" in result_df.columns
 
-    # Проверяем, что input был вызван дважды (один раз с ошибкой)
-    assert mock_input.call_count == 2
-    assert isinstance(result, pd.DataFrame)
+    # Проверяем, что данные соответствуют заданной дате
+    assert result_df["Дата операции"][0] == pd.to_datetime(test_date)
+
+    # Проверяем значение первой строки
+    assert result_df["Сумма операции с округлением"][0] == 160.89
 
 
 def test_night_greeting():

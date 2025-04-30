@@ -62,21 +62,14 @@ def read_transactions_excel_and_output_main(file_path: str, date: str) -> pd.Dat
 # print(list_dicts)
 
 
-def enter_input_main() -> pd.DataFrame:
-    """Функция для ввода пользователем даты и время"""
+def enter_input_main(data: str) -> pd.DataFrame:
+    """Функция для получения DataFrame"""
 
-    while True:
-        try:
-            date_enter = input("Введите дату в формате d.m.Y H:M:S \n")
-            datetime.strptime(date_enter, "%d.%m.%Y %H:%M:%S")
-            logger.info("Верный формат даты d.m.Y H:M:S")
-            break
-        except ValueError:
-            logger.info("Неверный формат даты. Используйте d.m.Y H:M:S")
-            print("Неверный формат даты. Используйте d.m.Y H:M:S")
+    struct_file = read_transactions_excel_and_output_main("../data/operations.xlsx", data)
+    return struct_file
 
-    struct_file_json = read_transactions_excel_and_output_main("../data/operations.xlsx", date_enter)
-    return struct_file_json
+
+# print(enter_input_main("31.12.2021 16:44:00"))
 
 
 def cards(data_frame: pd.DataFrame) -> list:
@@ -98,10 +91,10 @@ def cards(data_frame: pd.DataFrame) -> list:
 # print(cards(list_dicts))
 
 
-def top_transactions(last_dict: list[dict[str, str]]) -> list:
+def top_transactions(data_frame: pd.DataFrame) -> list:
     """Функция возвращает топ 5 транзакций"""
 
-    top_5 = last_dict.sort_values("Сумма операции с округлением", ascending=False).head(5)
+    top_5 = data_frame.sort_values("Сумма операции с округлением", ascending=False).head(5)
     result_top = top_5.rename(
         columns={
             "Дата платежа": "date",

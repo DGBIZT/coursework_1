@@ -60,7 +60,26 @@ def test_stocks_file(tmp_path):
 
 # Для services def simple_search(file_path: str ):
 @pytest.fixture
-def mock_input():
+def transactions():
+    return [
+        {"Дата операции": "2021-12-31", "Категория": "Переводы", "Описание": "Константин Л."},
+        {"Дата операции": "2021-12-30", "Категория": "Покупки", "Описание": "Магазин продуктов"},
+        {"Дата операции": "2021-12-29", "Категория": "Переводы", "Описание": "Светлана Т."},
+        {"Дата операции": "2021-12-28", "Категория": "Развлечения", "Описание": "Кинотеатр"},
+    ]
+
+
+# Фикстура для мока json.dumps
+@pytest.fixture
+def mock_json(monkeypatch):
+    def mock_dumps(data, *args, **kwargs):
+        return "mocked json data"
+
+    monkeypatch.setattr(json, "dumps", mock_dumps)
+
+
+@pytest.fixture
+def mock_2_input():
     # Создаем фиктивный ввод для функции input()
     with patch("builtins.input") as mocked_input:
         yield mocked_input

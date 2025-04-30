@@ -11,14 +11,15 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def page_main():
+def page_main(date: str) -> dict:
     """Функция главной страницы возвращает основную информацию"""
 
-    tabl_new = enter_input_main()
+    # tabl_new = enter_input_main()
+    period_date = enter_input_main(date)
     json_response = {
         "greeting": hello_client(),
-        "cards": cards(tabl_new),  # main_cards(struct_file_json)
-        "top_transactions": top_transactions(tabl_new),
+        "cards": cards(period_date),  # main_cards(struct_file_json)
+        "top_transactions": top_transactions(period_date),
         "currency_rates": currency_rate("../data/user_settings.json"),
         "stock_prices": user_stocks("../data/user_settings.json"),
     }
@@ -27,4 +28,4 @@ def page_main():
     return json_data
 
 
-# print(page_main())
+# print(page_main(date_enter))
